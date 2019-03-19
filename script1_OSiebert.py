@@ -7,7 +7,7 @@ Description: Script for mananging Virtual Box written in python3.
              start, stop, create, delete,  list settings, and list 
              available VMs.
 """
-
+import os
 
 """
 Funtion: main
@@ -29,32 +29,32 @@ def main():
         print('|(q) : Quit             |')
         print('|-----------------------|\n')
 
-        var = raw_input('Choose and option: ')
+        var = input('Choose and option: ')
         var = var.lower()
 
         if var not in 'abcdefq':
             print('\nPlease choose a valid option\n')
 
-        elif var is 'a':
+        elif var == 'a':
             createVM()
 
-        elif var is 'b':
+        elif var == 'b':
             listVM()
 
-        elif var is 'c':
-            vm = raw_input('Enter a VM to start: ')
+        elif var == 'c':
+            vm = input('Enter a VM to start: ')
             startVM(vm)
 
-        elif var is 'd':
-            vm = raw_input('Enter a VM to stop: ')
+        elif var == 'd':
+            vm = input('Enter a VM to stop: ')
             stopVM(vm)
 
-        elif var is 'e':
-            vm = raw_input('Enter a VM: ')
+        elif var == 'e':
+            vm = input('Enter a VM: ')
             listSettings(vm)
 
-        elif var is 'f':
-            vm = raw_input('Enter a VM to delete: ')
+        elif var == 'f':
+            vm = input('Enter a VM to delete: ')
             deleteVM(vm)
 
 """
@@ -63,7 +63,9 @@ Parameters: None
 Descripton:
 """
 def createVM():
-    pass
+    name = input('Enter a vm name: ')
+    OS = input('Enter an  OS type: ')
+    os.system('vboxmanage createvm --name ' + name + ' --ostype ' + OS + ' --register')
 
 """
 Function: listVM
@@ -71,8 +73,13 @@ Parameters: None
 Descripton:
 """
 def listVM():
-    pass
-
+    var = input('Detailed list? [y/n]: ')
+    while var not in 'yn':
+        var = input("Please enter [y/n]: ")
+    if var == 'y':
+        os.system('vboxmanage list vms --long')
+    if var == 'n':
+        os.system('vboxmanage list vms')
 """
 Function: startVm
 Parameters: vm - Virtual machine to start
