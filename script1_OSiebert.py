@@ -1,21 +1,21 @@
 #!/usr/bin/python3
-"""
-File: script1_OSiebert.py
-Author: Owen Siebert
-Description: Script for mananging Virtual Box written in python3.
-             Provides several options for VM managemet, including 
-             start, stop, create, delete,  list settings, and list 
-             available VMs.
-"""
+
+#File: script1_OSiebert.py
+#Author: Owen Siebert
+#Description: Script for mananging Virtual Box written in python3.
+#             Provides several options for VM managemet, including 
+#             start, stop, create, delete, list settings, and list 
+#             available VMs.
+
+
 import os
 
-"""
-Funtion: main
-Parameters: None
-Description: Main method, which contains the menu with VM options.
-             Keeps taking in options untill user enters 'q'. Reads 
-             input and calles function based on menu item chosen.
-"""
+#Function: main
+#Parameters: None
+#Description: Main method, which contains the menu with VM options.
+#             Keeps taking in options untill user enters 'q'. Reads 
+#             input and calles function based on menu item chosen.
+
 def main():
     var = ''
     while(var != 'q'):
@@ -57,21 +57,29 @@ def main():
             vm = input('Enter a VM to delete: ')
             deleteVM(vm)
 
-"""
-Function: createVM
-Parameters: None
-Descripton:
-"""
-def createVM():
-    name = input('Enter a vm name: ')
-    OS = input('Enter an  OS type: ')
-    os.system('vboxmanage createvm --name ' + name + ' --ostype ' + OS + ' --register')
 
-"""
-Function: listVM
-Parameters: None
-Descripton:
-"""
+#Function: createVM
+#Parameters: None
+#Descripton: Prompts user for a vm name, os type, path to an ISO
+#            and how much memory to allocate, and used that to 
+#            create a vm.
+
+def createVM():
+    name = input('Enter a vm name: ') 
+    OS = input('Enter an  OS type: ')
+    iso = input('Enter an ISO path: ')
+    mem = input("Enter memory size to allocate (bytes): ")
+    os.system('vboxmanage createvm --name ' + name + ' --ostype ' + OS + ' --register')
+    os.system('vboxmanage storagectl ' + name + ' --name IDE --add ide')
+    os.system('vboxmanage modifyvm ' + name + ' --memory ' + mem)
+    os.system('vboxmanage storageattach ' + name + ' --storagectl IDE --port 0 --device 0 --type dvddrive --medium ' + iso)
+
+
+
+#Function: listVM
+#Parameters: None
+#Descripton: Lists All vm's in virtualbox
+
 def listVM():
     var = input('Detailed list? [y/n]: ')
     while var not in 'yn':
@@ -80,38 +88,42 @@ def listVM():
         os.system('vboxmanage list vms --long')
     if var == 'n':
         os.system('vboxmanage list vms')
-"""
-Function: startVm
-Parameters: vm - Virtual machine to start
-Descripton:
-"""
+
+
+
+#Function: startVm
+#Parameters: vm - Virtual machine to start
+#Descripton: Startes Virtual Machine based on vm parameter
+
 def startVM(vm):
-    pass
+    os.system('vboxmanage startvm ' + vm)
 
-"""
-Function: stopVM
-Parameters: vm - Virtual machine to stop
-Descripton:
-"""
+
+
+#Function: stopVM
+#Parameters: vm - Virtual machine to stop
+#Descripton: Stops Virtual Machine based on vm parameter
+
 def stopVM(vm):
-    pass
+    os.system('vboxmanage controlvm ' + vm + ' poweroff soft')
 
-"""
-Function: listSettings
-Parameters: vm - Virtual machine to list settings for
-Descripton:
-"""
+
+
+#Function: listSettings
+#Parameters: vm - Virtual machine to list settings for
+#Descripton: Shows vm info based on vm parameter 
+
 def listSettings(vm):
-    pass
+    os.system('vboxmanage showvminfo ' + vm)
 
-"""
-Function: deleteVM
-Parameters: vm - Virtual machine to delete 
-Descripton:
-"""
+
+
+#Function: deleteVM
+#Parameters: vm - Virtual machine to delete 
+#Descripton: Delets VM based on vm parameter
+
 def deleteVM(vm):
-    pass
-
+    os.system('vboxmanage unregistervm ' + vm + ' --delete')
 
 if __name__ == "__main__":
     main()
