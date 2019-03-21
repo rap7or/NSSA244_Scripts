@@ -127,3 +127,7 @@ def deleteVM(vm):
 
 if __name__ == "__main__":
     main()
+
+
+# SOURCES
+# https://www.virtualbox.org/manual/ch08.html
