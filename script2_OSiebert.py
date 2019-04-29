@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os
-
+import subprocess
 def main():
     
     var = ''
@@ -84,16 +84,45 @@ def netTools():
     os.system('docker exec -it siebert2 apt update')
     os.system('docker exec -it siebert2 apt install net-tools -y')
     os.system('docker exec -it siebert2 apt install iputils-ping -y')
-    os.system('ping siebert1')
-    os.system('ping siebert2')
+    
+    cmd = 'docker exec -it siebert1 ifconfig |  grep inet'
+    result = subprocess.check_output(cmd, shell=True)
+    ip1 = str(result.strip().split()[1]).split("'")[1]
+
+    cmd = 'docker exec -it siebert2 ifconfig |  grep inet'
+    result = subprocess.check_output(cmd, shell=True)
+    ip2 = str(result.strip().split()[1]).split("'")[1]
+
+
+    os.system('\n\nping ' + ip1 + ' -c 1')
+    os.system('\n\nping ' + ip2 + ' -c 1\n\n')
+    
 def pingBetweem():
-    pass
+    cmd = 'docker exec -it siebert1 ifconfig |  grep inet'
+    try:
+        result = subprocess.check_output(cmd, shell=True)
+        ip1 = str(result.strip().split()[1]).split("'")[1]
+        print('\n\nPinging siebert1 from siebert2')
+        os.system('docker exec -it siebert2 ping ' + ip1 + ' -c 1')
+    except:
+        print('net-tools not installed please run option c')
+        return 1
+
+
+    cmd = 'docker exec -it siebert2 ifconfig |  grep inet'
+    result = subprocess.check_output(cmd, shell=True)
+    ip1 = str(result.strip().split()[1]).split("'")[1]
+    print('\n\nPinging siebert2 from siebert1')
+    os.system('docker exec -it siebert1 ping ' + ip1 + ' -c 1')
 
 def viewParametrs(cont):
-    pass
+    os.system('docker inspect ' + cont)
 
 def viewNetworks():
-    pass
+    print('siebert1 network: ')
+    os.system('docker container inspect siebert1 | grep -A 1 NetworkSettings')
+    print('siebert2 network: ')
+    os.system('docker container inspect siebert1 | grep -A 1 NetworkSettings')
 
 def showRun():
     os.system('docker stats --no-stream')
