@@ -1,6 +1,27 @@
 #!/usr/bin/python3
+
+
+#!/usr/bin/python3
+
+#File: script2_OSiebert.py
+#Author: Owen Siebert
+#Description: Script for mananging Docker containers written in python3.6.7.
+#             Provides several options for container managemet, including 
+#             Create, ping, view parameters, view network type, show running  
+#             containers, start, stop and remove.
+
+
+
 import os
 import subprocess
+
+
+#Function: main
+#Parameters: None
+#Description: Main method, which contains the menu with container options.
+#             Keeps taking in options untill user enters 'q'. Reads 
+#             input and calles function based on menu item chosen.
+
 def main():
     
     var = ''
@@ -44,7 +65,7 @@ def main():
             netTools()
 
         elif var == 'd':
-            pingBetweem()
+            pingBetween()
 
         elif var == 'e':
             cont = input('Enter a container name: ')
@@ -68,14 +89,30 @@ def main():
             cont = input('Enter a container name: ')
             deleteContainer(cont)
 
-
+#Function: createContainers
+#Parameters: None
+#Description: Creates 2 containers and backgrounds them with
+#             the names siebert1 and siebert2
 def createContainers():
     os.system('docker pull ubuntu:latest')
     os.system('docker run -d -i --name=siebert1 ubuntu:latest')
     os.system('docker run -d -i --name=siebert2 ubuntu:latest')
 
+
+#Function: getShell
+#Parameters: cont - container to get a shell on
+#Description: Uses docker exec to give user shell on container cont 
+
 def getShell(cont):
     os.system('docker exec -it ' + cont + ' bash')
+
+
+#Function: netTools
+#Parameters: None
+#Description: Runs apt update and installs net-tools and the ping command
+#             on both containers. It then runs the icommand and pareses
+#             the output to get the ip of each container. It then pings
+#             each from the host machine.
 
 def netTools():
     os.system('docker exec -it siebert1 apt update')
@@ -96,8 +133,13 @@ def netTools():
 
     os.system('\n\nping ' + ip1 + ' -c 1')
     os.system('\n\nping ' + ip2 + ' -c 1\n\n')
-    
-def pingBetweem():
+
+#Function: pingBetween
+#Parameters: None
+#Description: pings between the siebert1 and siebert2 containers.
+#             Gets the ip of each container ans pings it from the 
+#             opposite one. Catches error if net-tools isnt installed
+def pingBetween():
     cmd = 'docker exec -it siebert1 ifconfig |  grep inet'
     try:
         result = subprocess.check_output(cmd, shell=True)
@@ -115,25 +157,43 @@ def pingBetweem():
     print('\n\nPinging siebert2 from siebert1')
     os.system('docker exec -it siebert1 ping ' + ip1 + ' -c 1')
 
+#Function: viewParameters
+#Parameters: cont - container to inspect
+#Description: Runs docker inspect command on container cont
 def viewParametrs(cont):
     os.system('docker inspect ' + cont)
 
+#Function: viewNetworks
+#Parameters: None
+#Description: Runs docker inspect and greps out network type
 def viewNetworks():
     print('siebert1 network: ')
     os.system('docker container inspect siebert1 | grep -A 1 NetworkSettings')
     print('siebert2 network: ')
     os.system('docker container inspect siebert1 | grep -A 1 NetworkSettings')
 
+#Function: showRun
+#Parameters: None
+#Description: Runs docker stats to show running containers and their usage
 def showRun():
     os.system('docker stats --no-stream')
     print('\n')
 
+#Function: start
+#Parameters: cont - container to start
+#Description: starts container cont
 def start(cont):
     os.system('docker start ' + cont)
 
+#Function: stop
+#Parameters: cont - container to stop
+#Description: stops container cont
 def stop(cont):
     os.system('docker stop ' + cont)
 
+#Function: deleteContainer
+#Parameters: cont - container to delete
+#Description: deletes container cont
 def deleteContainer(cont):
     os.system('docker rm ' + cont)
 
